@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dynamic Flip Countdown</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #121212;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+    .flip-clock {
+      display: flex;
+      gap: 10px;
+    }
+    .digit {
+      background: #333;
+      border-radius: 8px;
+      padding: 20px;
+      font-size: 3em;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      text-align: center;
+      width: 80px;
+      transition: all 0.3s ease;
+    }
+    .label {
+      font-size: 1em;
+      text-align: center;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Countdown Timer</h1>
+  <div class="flip-clock">
+    <div>
+      <div id="hours" class="digit">00</div>
+      <div class="label">Hours</div>
+    </div>
+    <div>
+      <div id="minutes" class="digit">00</div>
+      <div class="label">Minutes</div>
+    </div>
+    <div>
+      <div id="seconds" class="digit">00</div>
+      <div class="label">Seconds</div>
+    </div>
+  </div>
+
+  <script>
+    function getTargetTime() {
+      const now = new Date();
+      const day = now.getDay(); // 0 = Sunday, 6 = Saturday
+      let target = new Date();
+
+      if ([1, 2, 3, 5].includes(day)) {
+        target.setHours(15, 0, 0, 0); // 3:00 PM
+      } else if (day === 4) {
+        target.setHours(14, 15, 0, 0); // 2:15 PM
+      } else {
+        target.setHours(23, 50, 0, 0); // 11:50 PM
+      }
+
+      if (now > target) {
+        // If past target, set secondary countdown
+        if ([1, 2, 3, 5, 4].includes(day)) {
+          target.setHours(23, 50, 0, 0); // 11:50 PM
+        } else {
+          target.setDate(target.getDate() + 1);
+          target.setHours(23, 50, 0, 0);
+        }
+      }
+
+      return target;
+    }
+
+    function updateCountdown() {
+      const now = new Date();
+      const target = getTargetTime();
+      const diff = target - now;
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+      document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+      document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
+</body>
+</html>
